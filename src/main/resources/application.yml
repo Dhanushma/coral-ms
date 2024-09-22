@@ -18,3 +18,8 @@ spring:
   h2:
     console:
       enabled: true
+
+core-banking:
+  api:
+    base-url: http://localhost:8080
+    transactions-path: /transactions

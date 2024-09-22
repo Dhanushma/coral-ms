@@ -29,7 +29,6 @@ public class TransactionDataLoaderTest {
 
     @Test
     public void testRun_ShouldLoadTransactionData() throws Exception {
-        // Given
         String accountNumber = "1234567890";
         LocalDate startDate = LocalDate.of(2024, 1, 1);
         LocalDate endDate = LocalDate.of(2024, 2, 1);
