@@ -5,18 +5,16 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 @Data
 @Schema(
         name="StatementRequest",
         description = "Request Account Statement"
 )
-public class StatementRequestDto {
+public class StatementRequestDTO {
 
     @Schema(
             description = "Account Number", example = "1234567890"
@@ -29,19 +27,19 @@ public class StatementRequestDto {
             description = "Start date", example = "2024-08-20"
     )
     @NotNull(message = "From date must not be empty")
-    private LocalDate fromDate;
+    private String fromDate;
 
     @Schema(
             description = "End date", example = "2024-09-20"
     )
     @NotNull(message = "To date must not be empty")
-    private LocalDate toDate;
+    private String toDate;
 
     public StatementRequest toStatementRequest() {
         return StatementRequest.builder()
                 .accountNumber(accountNumber)
-                .fromDate(fromDate)
-                .toDate(fromDate)
+                .fromDate(LocalDate.parse(fromDate))
+                .toDate(LocalDate.parse(fromDate))
                 .build();
     }
 }

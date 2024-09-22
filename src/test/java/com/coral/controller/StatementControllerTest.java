@@ -1,59 +1,74 @@
 package com.coral.controller;
 
-import com.coral.dto.StatementRequestDto;
-import com.coral.service.StatementService;
-import com.coral.utils.StatementConstants;
-import org.junit.jupiter.api.Assertions;
+import com.coral.dto.StatementRequestDTO;
+import com.coral.service.StatementRequestService;
+import com.coral.utils.StatementRequestConstants;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
-import java.time.LocalDate;
+
+import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
 
 @ExtendWith(MockitoExtension.class)
 public class StatementControllerTest {
 
     @Mock
-    private StatementService statementService;
+    private StatementRequestService statementService;
 
     @InjectMocks
     private StatementController statementController;
 
+    private MockMvc mockMvc;
+
+    private ObjectMapper objectMapper;
+
+    private final String FROM_DATE = "2024-01-01";
+    private final String TO_DATE = "2024-02-01";
+    private final String TEST_ACC = "1234567890";
+    private final String PATH = "/statements";
 
 
-    private StatementRequestDto setUp() {
-        StatementRequestDto statementRequestDto = new StatementRequestDto();
-        statementRequestDto.setAccountNumber("Test_Acc");
-        LocalDate fromDate = LocalDate.parse("2024-01-01");
-        LocalDate toDate = LocalDate.parse("2024-02-01");
-        statementRequestDto.setFromDate(fromDate);
-        statementRequestDto.setToDate(toDate);
-        return statementRequestDto;
+    @BeforeEach
+    void setUp() {
+        mockMvc = standaloneSetup(statementController).build();
+        objectMapper = new ObjectMapper();
+    }
+
+
+    @Test
+    public void testGenerateStatement_Success() throws Exception {
+        StatementRequestDTO statementRequestDto = new StatementRequestDTO();
+        statementRequestDto.setAccountNumber(TEST_ACC);
+        statementRequestDto.setFromDate(FROM_DATE);
+        statementRequestDto.setToDate(TO_DATE);
+
+        mockMvc.perform(MockMvcRequestBuilders.post(PATH)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(statementRequestDto)))
+                .andExpect(MockMvcResultMatchers.status().isCreated())
+                .andExpect(MockMvcResultMatchers.content().string(StatementRequestConstants.STATEMENT_REQ_SUBMITTED));
+
+        Mockito.verify(statementService, Mockito.times(1)).saveStatementRequest(statementRequestDto);
     }
 
     @Test
-    public void testGenerateStatement_Success() {
-        StatementRequestDto requestDto = setUp();
-        Mockito.doNothing().when(statementService).generateStatement(Mockito.any());
-        ResponseEntity<String> response = statementController.generateStatement(requestDto);
-        Mockito.verify(statementService).generateStatement(requestDto);
-        Assertions.assertEquals(HttpStatus.CREATED, response.getStatusCode());
-        Assertions.assertEquals(StatementConstants.STATEMENT_REQ_SUBMITTED, response.getBody());
+    public void testGenerateStatement_ValidationError() throws Exception {
+        StatementRequestDTO statementRequestDto = new StatementRequestDTO();
+        statementRequestDto.setFromDate(FROM_DATE);
+        statementRequestDto.setToDate(TO_DATE);
+        mockMvc.perform(MockMvcRequestBuilders.post(PATH)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(statementRequestDto)))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest());
     }
-
-    //TODO - failure test
-    /*@Test
-    public void testGenerateStatement_Failure() {
-        StatementRequestDto requestDto = setUp();
-        Mockito.doThrow(new RuntimeException("Error occurred while calling statement service"))
-                .when(statementService).generateStatement(Mockito.any(StatementRequestDto.class));
-        ResponseEntity<String> response = statementController.generateStatement(requestDto);
-        Mockito.verify(statementService).generateStatement(requestDto);
-        Assertions.assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
-    }*/
 }

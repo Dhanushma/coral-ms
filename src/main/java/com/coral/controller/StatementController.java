@@ -1,9 +1,9 @@
 package com.coral.controller;
 
 import com.coral.dto.ErrorResponseDTO;
-import com.coral.dto.StatementRequestDto;
-import com.coral.service.StatementService;
-import com.coral.utils.StatementConstants;
+import com.coral.dto.StatementRequestDTO;
+import com.coral.service.StatementRequestService;
+import com.coral.utils.StatementRequestConstants;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -18,15 +18,15 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-@RestController
 @Tag(
         name = "Account Statement Rest APIs",
         description = "Rest APIs for Account Statement"
 )
+@RestController
 public class StatementController {
 
     @Autowired
-    private StatementService statementService;
+    private StatementRequestService statementService;
 
     @Operation(
             summary = "Generate account statement",
@@ -50,8 +50,8 @@ public class StatementController {
             )
     })
     @PostMapping("/statements")
-    public ResponseEntity<String> generateStatement(@Valid @RequestBody StatementRequestDto statementRequestDto) {
-        statementService.generateStatement(statementRequestDto);
-        return new ResponseEntity<>(StatementConstants.STATEMENT_REQ_SUBMITTED, HttpStatus.CREATED);
+    public ResponseEntity<String> generateStatement(@Valid @RequestBody StatementRequestDTO statementRequestDto) {
+        statementService.saveStatementRequest(statementRequestDto);
+        return new ResponseEntity<>(StatementRequestConstants.STATEMENT_REQ_SUBMITTED, HttpStatus.CREATED);
     }
 }

@@ -10,19 +10,20 @@ import java.time.LocalDateTime;
 @Entity
 @Data
 @Builder
+@Table(name = "statementRequest")
 public class StatementRequest {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
 
-    @Column(name = "account_number")
+    @Column(name = "accountNumber")
     private String accountNumber;
 
-    @Column(name = "from_date")
+    @Column(name = "fromDate")
     private LocalDate fromDate;
 
-    @Column(name = "to_date")
+    @Column(name = "toDate")
     private LocalDate toDate;
 
     @Column(name = "status")
