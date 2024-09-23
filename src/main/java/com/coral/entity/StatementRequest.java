@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 public class StatementRequest {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
     @Column(name = "accountNumber")
@@ -28,4 +28,7 @@ public class StatementRequest {
 
     @Column(name = "status")
     private String status;
+
+    @Column(name = "emailId")
+    private String emailId;
 }

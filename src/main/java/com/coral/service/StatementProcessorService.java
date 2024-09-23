@@ -13,7 +13,7 @@ import java.util.List;
 
 @Service
 @Setter
-public class StatementGeneratorService {
+public class StatementProcessorService {
 
     @Autowired
     private RestTemplate restTemplate;

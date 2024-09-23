@@ -2,6 +2,7 @@ package com.coral.utils;
 
 import com.coral.entity.Transaction;
 import com.coral.repository.TransactionRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
@@ -12,6 +13,7 @@ import java.time.LocalDate;
 import java.util.Random;
 
 @Component
+@Slf4j
 public class TransactionDataLoader implements CommandLineRunner {
 
 
@@ -21,7 +23,7 @@ public class TransactionDataLoader implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
 
-        System.out.println("Loading Transaction Data");
+        log.info("Loading Transaction Data");
         String accountNumber = "1234567890";
         LocalDate startDate = LocalDate.of(2024, 1, 1);
         LocalDate endDate = LocalDate.of(2024, 2, 1);

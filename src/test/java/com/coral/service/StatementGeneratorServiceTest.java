@@ -18,7 +18,7 @@ import java.util.List;
 public class StatementGeneratorServiceTest {
 
     @InjectMocks
-    private StatementGeneratorService statementGeneratorService;
+    private StatementProcessorService statementGeneratorService;
 
     @Mock
     private RestTemplate restTemplate;

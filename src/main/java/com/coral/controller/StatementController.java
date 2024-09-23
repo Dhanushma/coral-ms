@@ -2,6 +2,8 @@ package com.coral.controller;
 
 import com.coral.dto.ErrorResponseDTO;
 import com.coral.dto.StatementRequestDTO;
+import com.coral.entity.StatementRequest;
+import com.coral.event.StatementRequestEvent;
 import com.coral.service.StatementRequestService;
 import com.coral.utils.StatementRequestConstants;
 import io.swagger.v3.oas.annotations.Operation;
@@ -12,6 +14,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -27,6 +30,9 @@ public class StatementController {
 
     @Autowired
     private StatementRequestService statementService;
+
+    @Autowired
+    private ApplicationEventPublisher eventPublisher;
 
     @Operation(
             summary = "Generate account statement",
@@ -51,7 +57,8 @@ public class StatementController {
     })
     @PostMapping("/statements")
     public ResponseEntity<String> generateStatement(@Valid @RequestBody StatementRequestDTO statementRequestDto) {
-        statementService.saveStatementRequest(statementRequestDto);
+        StatementRequest statementRequest = statementService.saveStatementRequest(statementRequestDto);
+        eventPublisher.publishEvent(new StatementRequestEvent(this, statementRequest.getId()));
         return new ResponseEntity<>(StatementRequestConstants.STATEMENT_REQ_SUBMITTED, HttpStatus.CREATED);
     }
 }
