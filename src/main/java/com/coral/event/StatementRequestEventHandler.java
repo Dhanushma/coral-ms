@@ -18,6 +18,7 @@ public class StatementRequestEventHandler {
         log.info("Processing statement request event with requestId:{}", event.getRequestId());
         try {
             statementRequestService.processStatementRequestEvent(event.getRequestId());
+            log.info("Processing completed");
         } catch (Exception e) {
             log.error("Error occurred while processing statement request event {}", e.getMessage());
             throw new RuntimeException("Error occurred while processing statement request", e);

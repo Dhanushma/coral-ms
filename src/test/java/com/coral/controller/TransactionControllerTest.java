@@ -43,7 +43,7 @@ public class TransactionControllerTest {
     }
 
     @Test
-    public void testGetPaginatedTransactions_Success() throws Exception {
+    public void testGetPaginatedTransactionsSuccess() throws Exception {
         TransactionDTO transactionDTO = new TransactionDTO(1L, BigDecimal.valueOf(100), LocalDate.of(2024, 1, 10));
         TransactionResponseDTO responseDTO = new TransactionResponseDTO(List.of(transactionDTO), true);
 
@@ -64,7 +64,7 @@ public class TransactionControllerTest {
     }
 
     @Test
-    public void testGetPaginatedTransactions_NoTransactions() throws Exception {
+    public void testGetPaginatedTransactionsNoTransactions() throws Exception {
         TransactionResponseDTO responseDTO = new TransactionResponseDTO(List.of(), true);
 
         Mockito.when(transactionService.getTransactionsByAccountNumberAndDateRange(Mockito.anyString(), Mockito.any(LocalDate.class), Mockito.any(LocalDate.class), Mockito.anyInt(), Mockito.anyInt()))
@@ -82,7 +82,7 @@ public class TransactionControllerTest {
     }
 
     @Test
-    public void testGetPaginatedTransactions_InvalidDate() throws Exception {
+    public void testGetPaginatedTransactionsInvalidDate() throws Exception {
 
         mockMvc.perform(MockMvcRequestBuilders.get("/transactions")
                         .param("accountNumber", ACC_NUM)
@@ -94,7 +94,7 @@ public class TransactionControllerTest {
     }
 
     @Test
-    public void testGetPaginatedTransactions_DefaultSizeAndPage() throws Exception {
+    public void testGetPaginatedTransactionsDefaultSizeAndPage() throws Exception {
         LocalDate fromDate = LocalDate.of(2024, 1, 1);
         LocalDate toDate = LocalDate.of(2024, 2, 1);
         TransactionDTO transactionDTO = new TransactionDTO(1L, BigDecimal.valueOf(100), LocalDate.of(2024, 1, 10));

@@ -4,7 +4,6 @@ import com.coral.entity.StatementRequest;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import lombok.Data;
 
@@ -27,13 +26,13 @@ public class StatementRequestDTO {
     @Schema(
             description = "Start date", example = "2024-08-20"
     )
-    @NotNull(message = "From date must not be empty")
+    @NotBlank(message = "From date must not be empty")
     private String fromDate;
 
     @Schema(
             description = "End date", example = "2024-09-20"
     )
-    @NotNull(message = "To date must not be empty")
+    @NotBlank(message = "To date must not be empty")
     private String toDate;
 
     @Email(message = "Please input a valid email Id")
@@ -43,7 +42,7 @@ public class StatementRequestDTO {
         return StatementRequest.builder()
                 .accountNumber(accountNumber)
                 .fromDate(LocalDate.parse(fromDate))
-                .toDate(LocalDate.parse(fromDate))
+                .toDate(LocalDate.parse(toDate))
                 .emailId(emailId)
                 .build();
     }

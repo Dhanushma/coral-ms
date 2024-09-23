@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @ExtendWith(MockitoExtension.class)
-public class StatementGeneratorServiceTest {
+public class StatementProcessorServiceTest {
 
     @InjectMocks
     private StatementProcessorService statementGeneratorService;
@@ -29,7 +29,7 @@ public class StatementGeneratorServiceTest {
 
 
     @Test
-    void generateAccountStatement_shouldReturnListOfTransactions() {
+    void generateAccountStatementSuccess() {
 
 
         TransactionResponseDTO firstPageResponse = new TransactionResponseDTO();
@@ -44,7 +44,7 @@ public class StatementGeneratorServiceTest {
                 .thenReturn(firstPageResponse)
                 .thenReturn(secondPageResponse);
 
-        List<TransactionDTO> transactions = statementGeneratorService.generateAccountStatement(ACCOUNT_NUMBER, FROM_DATE, TO_DATE);
+        List<TransactionDTO> transactions = statementGeneratorService.generateAccountStatement(ACCOUNT_NUMBER, FROM_DATE, TO_DATE).blockingGet();
 
 
         Assertions.assertNotNull(transactions);

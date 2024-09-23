@@ -1,15 +1,13 @@
 package com.coral.event;
 
 import lombok.Getter;
-import org.springframework.context.ApplicationEvent;
 
 @Getter
-public class StatementRequestEvent extends ApplicationEvent {
+public class StatementRequestEvent {
 
     private final Long requestId;
 
-    public StatementRequestEvent(Object source, Long requestId) {
-        super(source);
+    public StatementRequestEvent(Long requestId) {
         this.requestId = requestId;
     }
 }

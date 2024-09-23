@@ -21,7 +21,7 @@ public class TransactionDataLoader implements CommandLineRunner {
     private TransactionRepository transactionRepository;
 
     @Override
-    public void run(String... args) throws Exception {
+    public void run(String... args){
 
         log.info("Loading Transaction Data");
         String accountNumber = "1234567890";

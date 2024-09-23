@@ -58,7 +58,7 @@ public class StatementController {
     @PostMapping("/statements")
     public ResponseEntity<String> generateStatement(@Valid @RequestBody StatementRequestDTO statementRequestDto) {
         StatementRequest statementRequest = statementService.saveStatementRequest(statementRequestDto);
-        eventPublisher.publishEvent(new StatementRequestEvent(this, statementRequest.getId()));
+        eventPublisher.publishEvent(new StatementRequestEvent(statementRequest.getId()));
         return new ResponseEntity<>(StatementRequestConstants.STATEMENT_REQ_SUBMITTED, HttpStatus.CREATED);
     }
 }

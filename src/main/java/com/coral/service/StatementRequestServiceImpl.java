@@ -5,11 +5,12 @@ import com.coral.dto.TransactionDTO;
 import com.coral.entity.StatementRequest;
 import com.coral.repository.StatementRequestRepository;
 import com.coral.utils.StatementRequestConstants;
+import io.reactivex.rxjava3.core.Single;
+import io.reactivex.rxjava3.schedulers.Schedulers;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,6 +22,12 @@ public class StatementRequestServiceImpl implements StatementRequestService {
 
     @Autowired
     private StatementRequestRepository statementRequestRepository;
+
+    @Autowired
+    private StatementProcessorService statementProcessorService;
+
+    @Autowired
+    private EmailService emailService;
 
     @Override
     public StatementRequest saveStatementRequest(StatementRequestDTO statementRequestDto) {
@@ -35,33 +42,38 @@ public class StatementRequestServiceImpl implements StatementRequestService {
     }
 
     @Override
-    public void processStatementRequestEvent(Long id) {
+    public void processStatementRequestEvent(Long id){
         Optional<StatementRequest> optionalStatementRequest = statementRequestRepository.findById(id);
         if (optionalStatementRequest.isPresent() && SCHEDULED.equals(optionalStatementRequest.get().getStatus())) {
             StatementRequest statementRequest = optionalStatementRequest.get();
-            statementRequest.setStatus(PROCESSING);
-            statementRequestRepository.save(statementRequest);
 
-            log.info("call StatementProcessor service");
-            List<TransactionDTO> transactionsList = generateStatementForRequest(statementRequest);
+            generateStatementForRequest(statementRequest)
+                    .doOnSuccess(transactions -> {
+                        log.info("Transactions received from external core banking api");
+                        statementRequest.setStatus(COMPLETED);
+                        statementRequestRepository.save(statementRequest);
+                        emailService.generateEmailStatement(transactions, statementRequest.getEmailId());
 
-            log.info("Invoking Email Service to trigger email to customer");
-            generateEmailStatement(transactionsList, statementRequest.getEmailId());
-
-            statementRequest.setStatus(COMPLETED);
-            statementRequestRepository.save(statementRequest);
+                    }).doOnError(error -> {
+                        statementRequest.setStatus(FAILED);
+                        statementRequestRepository.save(statementRequest);
+                        log.error("Error generating statement: {}", error.getMessage(), error);
+                    }).subscribeOn(Schedulers.io())
+                    .subscribe();
         }
     }
 
-    private List<TransactionDTO> generateStatementForRequest(StatementRequest statementRequest) {
-        // add logic
-        return new ArrayList<>();
+    private Single<List<TransactionDTO>> generateStatementForRequest(StatementRequest statementRequest) {
+        log.info("Current Thread {}", Thread.currentThread().getName() );
+        /*try {
+            Thread.sleep(5000);
+        } catch (InterruptedException e){
+            log.error(e.getMessage());
+        }*/
+        return statementProcessorService.generateAccountStatement(
+                statementRequest.getAccountNumber(),
+                statementRequest.getFromDate().toString(),
+                statementRequest.getToDate().toString());
     }
-
-    private void generateEmailStatement(List<TransactionDTO> transactions, String emailId) {
-        // send email to customer
-        log.info("Email has been successfully sent");
-    }
-
 
 }

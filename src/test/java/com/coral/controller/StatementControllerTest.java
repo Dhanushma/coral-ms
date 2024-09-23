@@ -1,6 +1,7 @@
 package com.coral.controller;
 
 import com.coral.dto.StatementRequestDTO;
+import com.coral.entity.StatementRequest;
 import com.coral.service.StatementRequestService;
 import com.coral.utils.StatementRequestConstants;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -11,6 +12,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -25,6 +27,9 @@ public class StatementControllerTest {
     @Mock
     private StatementRequestService statementService;
 
+    @Mock
+    private ApplicationEventPublisher eventPublisher;
+
     @InjectMocks
     private StatementController statementController;
 
@@ -35,6 +40,7 @@ public class StatementControllerTest {
     private final String FROM_DATE = "2024-01-01";
     private final String TO_DATE = "2024-02-01";
     private final String TEST_ACC = "1234567890";
+    private final String EMAIL = "test@gmail.com";
     private final String PATH = "/statements";
 
 
@@ -46,11 +52,15 @@ public class StatementControllerTest {
 
 
     @Test
-    public void testGenerateStatement_Success() throws Exception {
+    public void testGenerateStatementSuccess() throws Exception {
         StatementRequestDTO statementRequestDto = new StatementRequestDTO();
         statementRequestDto.setAccountNumber(TEST_ACC);
         statementRequestDto.setFromDate(FROM_DATE);
         statementRequestDto.setToDate(TO_DATE);
+        statementRequestDto.setEmailId(EMAIL);
+
+        StatementRequest statementRequest = StatementRequest.builder().id(1L).build();
+        Mockito.when(statementService.saveStatementRequest(statementRequestDto)).thenReturn(statementRequest);
 
         mockMvc.perform(MockMvcRequestBuilders.post(PATH)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -62,7 +72,7 @@ public class StatementControllerTest {
     }
 
     @Test
-    public void testGenerateStatement_ValidationError() throws Exception {
+    public void testGenerateStatementValidationError() throws Exception {
         StatementRequestDTO statementRequestDto = new StatementRequestDTO();
         statementRequestDto.setFromDate(FROM_DATE);
         statementRequestDto.setToDate(TO_DATE);

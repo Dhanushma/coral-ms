@@ -2,6 +2,8 @@ package com.coral.service;
 
 import com.coral.dto.TransactionDTO;
 import com.coral.dto.TransactionResponseDTO;
+import io.reactivex.rxjava3.core.Single;
+import io.reactivex.rxjava3.schedulers.Schedulers;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -24,26 +26,38 @@ public class StatementProcessorService {
     @Value("${core-banking.api.transactions-path}")
     String path;
 
-    public List<TransactionDTO> generateAccountStatement(String accountNumber, String fromDate, String toDate) {
-
-        List<TransactionDTO> accntTransactionList = new ArrayList<>();
-        boolean isLastPage = false;
-        int page = 0;
-
-        while (!isLastPage) {
-            String url = String.format("%s%s?accountNumber=%s&fromDate=%s&toDate=%s&page=%d",
-                    bankAPIUrl, path, accountNumber, fromDate, toDate, page);
-
-            TransactionResponseDTO transactionResponseDTO =
-                    restTemplate.getForObject(url, TransactionResponseDTO.class);
-
-            if (transactionResponseDTO != null) {
-                accntTransactionList.addAll(transactionResponseDTO.getTransactionDTOList());
-                isLastPage = transactionResponseDTO.isLastPage();
-            }
-            page++;
-        }
-        return accntTransactionList;
-
+    public Single<List<TransactionDTO>> generateAccountStatement(String accountNumber, String fromDate, String toDate) {
+        return fetchAndAccumulateTransactions(accountNumber, fromDate, toDate, 0)
+                .subscribeOn(Schedulers.io());
     }
+
+    private Single<List<TransactionDTO>> fetchAndAccumulateTransactions(String accountNumber, String fromDate, String toDate, int currentPage) {
+        return fetchTransaction(accountNumber, fromDate, toDate, currentPage)
+                .flatMap(response -> {
+                    List<TransactionDTO> currentTransactions = response.getTransactionDTOList();
+                    if (response.isLastPage()) {
+                        return Single.just(currentTransactions);
+                    } else {
+                        return fetchAndAccumulateTransactions(accountNumber, fromDate, toDate, currentPage + 1)
+                                .map(nextTransactions -> {
+                                    List<TransactionDTO> combinedTransactions = new ArrayList<>(currentTransactions);
+                                    combinedTransactions.addAll(nextTransactions);
+                                    return combinedTransactions;
+                                });
+                    }
+                });
+    }
+
+    private Single<TransactionResponseDTO> fetchTransaction(String accountNumber, String fromDate, String toDate, int page) {
+        return Single.fromCallable(() -> {
+            String coreBankApiUrl = createCoreBankApiUrl(accountNumber, fromDate, toDate, page);
+            return restTemplate.getForObject(coreBankApiUrl, TransactionResponseDTO.class);
+        }).subscribeOn(Schedulers.io());
+    }
+
+    private String createCoreBankApiUrl(String accountNumber, String fromDate, String toDate, int page) {
+        return String.format("%s%s?accountNumber=%s&fromDate=%s&toDate=%s&page=%d",
+                bankAPIUrl, path, accountNumber, fromDate, toDate, page);
+    }
+
 }
