@@ -41,7 +41,7 @@ constraints.
 
 `git clone https://github.com/Dhanushma/coral-ms.git`
 
-git clone https://github.com/Dhanushma/core-bank.git
+`git clone https://github.com/Dhanushma/core-bank.git`
 
 
 2. Build the application :
