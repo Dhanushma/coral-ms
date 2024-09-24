@@ -4,6 +4,9 @@
 coral-ms is an application built on spring Boot and Java. The service exposes APIs which allows client to generate account statements by integrating with a legacy upstream system asynchronously that has resource and scalability
 constraints.
 
+<img width="1512" alt="Screenshot 2024-09-24 at 5 13 27 PM" src="https://github.com/user-attachments/assets/0fe7d12a-7f81-4d9d-9696-44656a53a8b9">
+
+
 ### Features
 1. Generate Account statement report asynchronously and share on clients email id
 2. Swagger for API documentation
