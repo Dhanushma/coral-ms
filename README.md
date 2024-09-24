@@ -48,14 +48,17 @@ constraints.
 3. Run the below command:
 
 `mvn spring-boot:run` 
+
 or 
 
 `java -jar target/coral-ms-0.0.1-SNAPSHOT.jar`
 
 #### Run application using Docker
 `docker run -d -p 8082:8082 kddhan/core-bank:0.0.1`
+
 `docker run -d -p 8081:8081 kddhan/coral-ms:0.0.1`
 
 #### Access the APIs - 
 http://localhost:8081/swagger-ui.html
+
 http://localhost:8082/swagger-ui.html 
