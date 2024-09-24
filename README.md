@@ -15,7 +15,7 @@ constraints.
 1. User inputs accountNumber, emailId, fromDate and toDate to generate account statement and expects to receive the statement via email
 2. Response has List of transactions, containing transactionId, transactionAmount and transctionDate. transactionType
    (credit/debit) is ignored to make the implementation simple.
-3. Implemented as two services, coral-ms and core-bank. core-ms application can be devided further into different modules like core, processor, data-access, email service.
+3. Implemented as two services, coral-ms(port 8081) and core-bank(port 8082). core-ms application can be devided further into different modules like core, processor, data-access, email service.
 4. Used H2 database to store statement request and Transactions
 5. Transaction table will be prepopulated on core-bank application start-up with 1000 entries for the
    AccountNumber - 1234567890 and Year - 2024
@@ -41,6 +41,9 @@ constraints.
 
 `git clone https://github.com/Dhanushma/coral-ms.git`
 
+git clone https://github.com/Dhanushma/core-bank.git
+
+
 2. Build the application :
 
 `mvn clean install`
@@ -52,6 +55,8 @@ constraints.
 or 
 
 `java -jar target/coral-ms-0.0.1-SNAPSHOT.jar`
+
+`java -jar target/core-bank-0.0.1-SNAPSHOT.jar`
 
 #### Run application using Docker
 `docker run -d -p 8082:8082 kddhan/core-bank:0.0.1`
