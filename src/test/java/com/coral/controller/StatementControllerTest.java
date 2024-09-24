@@ -41,7 +41,7 @@ public class StatementControllerTest {
     private final String TO_DATE = "2024-02-01";
     private final String TEST_ACC = "1234567890";
     private final String EMAIL = "test@gmail.com";
-    private final String PATH = "/statements";
+    private final String PATH = "/coral-ms/api/statements";
 
 
     @BeforeEach
