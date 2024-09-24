@@ -11,6 +11,15 @@ constraints.
 1. Generate Account statement report asynchronously and share on clients email id
 2. Swagger for API documentation
 
+### Assumptions
+1. User inputs accountNumber, emailId, fromDate and toDate to generate account statement and expects to receive the statement via email
+2. Response has List of transactions, containing transactionId, transactionAmount and transctionDate. transactionType
+   (credit/debit) is ignored to make the implementation simple.
+3. Implemented as two services, coral-ms and core-bank. core-ms application can be devided further into different modules like core, processor, data-access, email service.
+4. Used H2 database to store statement request and Transactions
+5. Transaction table will be prepopulated on core-bank application start-up with 1000 entries for the
+   AccountNumber - 1234567890 and Year - 2024
+6. Access H2 console - http://localhost:8082/h2-console , username - 'user' and password - 'password'
 
 ### Technologies
 
