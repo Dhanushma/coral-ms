@@ -13,13 +13,16 @@ constraints.
 
 ### Assumptions
 1. User inputs accountNumber, emailId, fromDate and toDate to generate account statement and expects to receive the statement via email
-2. Response has List of transactions, containing transactionId, transactionAmount and transctionDate. transactionType
+   api - /coral-ms/api/statements
+3. Statement request is stored in H2 database, trigger StatementRequestEvent and process the request asynchronously  by coral-ms
+4. Response has List of transactions, containing transactionId, transactionAmount and transctionDate. transactionType
    (credit/debit) is ignored to make the implementation simple.
-3. Implemented as two services, coral-ms(port 8081) and core-bank(port 8082). core-ms application can be devided further into different modules like core, processor, data-access, email service.
-4. Used H2 database to store statement request and Transactions
-5. Transaction table will be prepopulated on core-bank application start-up with 1000 entries for the
+5. Implemented as two services, coral-ms(port 8081) and core-bank(port 8082) where coral-ms invokes core-bank api to fetch transactions
+6. core-ms application can be devided further into different modules like core, processor, data-access, email service(TODO)
+7. Used H2 database to store statement request and Transactions
+8. Transaction table will be prepopulated on core-bank application start-up with 1000 entries for the
    AccountNumber - 1234567890 and Year - 2024
-6. Access H2 console - http://localhost:8082/h2-console , username - 'user' and password - 'password'
+9. Access H2 console - http://localhost:8082/h2-console , username - 'user' and password - 'password'
 
 ### Technologies
 
