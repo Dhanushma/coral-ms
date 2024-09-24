@@ -25,4 +25,4 @@ spring:
 core-banking:
   api:
     base-url: http://localhost:8082
-    transactions-path: /core-bank-api/transactions
+    transactions-path: /core-bank/api/transactions
